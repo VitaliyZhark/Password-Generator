@@ -34,4 +34,4 @@ The following image shows the web application's appearance and functionality:
 
 ---
 
- MIT &copy; 2023 <a href="https://github.com/VitaliyZhark/">Vitaliy Zharkovskiy</a>. Confidential and Proprietary. © All Rights Reserved.
+ MIT &copy; 2023 <a href="https://github.com/VitaliyZhark/">Vitaliy Zharkovskiy</a>. © All Rights Reserved.

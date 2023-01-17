@@ -1,92 +1,194 @@
-// Assignment code here
-function generatePassword() {
-  var numericCharacters = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-  var uppercaseCharacters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
-  var lowercaseCharacters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-  var specialCharacters = ['@', '%', '+', '\\', '/', "'", '!', '#', '$', '^', '?', ':', ',', ')', '(', '}', '{', ']', '[', '~', '-', '_', '.'];
-  var possibleCharacters = [];
+// This is a simple Password Generator App that will generate random password maybe you can you them to secure your account.
+// I tried my best to make the code as simple as possible please dont mind the variable names.
+// Also this idea came in my mind after checking Traversy Media's latest video.
 
-  // Get input and validate
-  numberOfCharacters = prompt("How many characters do you want in your password? Choose between 8-128 characters.");
-  if (numberOfCharacters < 8 || numberOfCharacters > 128) {
-    return "Please choose a valid number of characters.";
-  } else if (isNaN(numberOfCharacters)) {
-    numberOfCharacters = prompt("Please enter a valid number.");
-  }
-  else {
-    alert("Your password will be " + numberOfCharacters + " characters long.");
-    
-  }
+// Clear the concole on every refresh
+console.clear();
+// set the body to full height
+// document.body.style.height = `${innerHeight}px`
 
-  hasLowercase = confirm("Do you want lowercase characters?");
-  if (hasLowercase) {
-    var turnToLowercase = alert("Your password will have lowercase characters.");
-  }
-  else {
-    alert("Your password will NOT have lowercase characters.");
-  }
-
-  hasUppercase = confirm("Do you want uppercase characters?");
-  if (hasUppercase) {
-    alert("Your password will have uppercase characters.");
-  }
-  else {
-    alert("Your password will NOT have uppercase characters.");
-  }
-
-  hasNumbers = confirm("Do you want to use numbers?");
-  if (hasNumbers) {
-    alert("Your password will have numbers.");
-  }
-  else {
-    alert("Your password will NOT have numbers.");
-  }
-
-  hasSpecial = confirm("Do you want special characters?");
-  if (hasSpecial) {
-    alert("Your password will have special characters.");
-  }
-  else {
-    alert("Your password will NOT have special characters.");
-  }
-
-  if (hasLowercase === false && hasUppercase === false && hasNumbers === false && hasSpecial === false) {
-    return "Please select at least one character type.";
-  };
-
-  // Group selected characters
-  if (hasLowercase) {
-    possibleCharacters = possibleCharacters.concat(lowercaseCharacters);
-  }
-  if (hasUppercase) {
-    possibleCharacters = possibleCharacters.concat(uppercaseCharacters);
-  }
-  if (hasNumbers) {
-    possibleCharacters = possibleCharacters.concat(numericCharacters);
-  }
-  if (hasSpecial) {
-    possibleCharacters = possibleCharacters.concat(specialCharacters);
-  }
-
-  // Pick random cards out of new pool for length of password
-  let finalPassword = ""
-  for (let i = 0; i < numberOfCharacters; i++) {
-    let rng =[Math.floor(Math.random() * possibleCharacters.length)];
-    // or finalPassword += possibleCharacters[rng];
-    finalPassword = finalPassword + possibleCharacters[rng];
-  }
-  return finalPassword;
+// Range Slider Properties.
+// Fill : The trailing color that you see when you drag the slider.
+// background : Default Range Slider Background
+const sliderProps = {
+	fill: "#0B1EDF",
+	background: "rgba(255, 255, 255, 0.214)",
 };
 
-// Get references to the #generate element
-var generateBtn = document.querySelector("#generate");
+// Selecting the Range Slider container which will effect the LENGTH property of the password.
+const slider = document.querySelector(".range__slider");
 
-// Write password to the #password input
-function writePassword() {
-  var password = generatePassword();
-  var passwordText = document.querySelector("#password");
-  passwordText.value = password;
+// Text which will show the value of the range slider.
+const sliderValue = document.querySelector(".length__title");
+
+// Using Event Listener to apply the fill and also change the value of the text.
+slider.querySelector("input").addEventListener("input", event => {
+	sliderValue.setAttribute("data-length", event.target.value);
+	applyFill(event.target);
+});
+// Selecting the range input and passing it in the applyFill func.
+applyFill(slider.querySelector("input"));
+// This function is responsible to create the trailing color and setting the fill.
+function applyFill(slider) {
+	const percentage = (100 * (slider.value - slider.min)) / (slider.max - slider.min);
+	const bg = `linear-gradient(90deg, ${sliderProps.fill} ${percentage}%, ${sliderProps.background} ${percentage +
+			0.1}%)`;
+	slider.style.background = bg;
+	sliderValue.setAttribute("data-length", slider.value);
 }
 
-// Add event listener to generate button
-generateBtn.addEventListener("click", writePassword);
+// Object of all the function names that we will use to create random letters of password
+const randomFunc = {
+	lower: getRandomLower,
+	upper: getRandomUpper,
+	number: getRandomNumber,
+	symbol: getRandomSymbol,
+};
+
+// Random more secure value
+function secureMathRandom() {
+	return window.crypto.getRandomValues(new Uint32Array(1))[0] / (Math.pow(2, 32) - 1);
+}
+
+// Generator Functions
+// All the functions that are responsible to return a random value taht we will use to create password.
+function getRandomLower() {
+	return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
+}
+function getRandomUpper() {
+	return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+}
+function getRandomNumber() {
+	return String.fromCharCode(Math.floor(secureMathRandom() * 10) + 48);
+}
+function getRandomSymbol() {
+	const symbols = '~!@#$%^&*()_+{}":?><;.,';
+	return symbols[Math.floor(Math.random() * symbols.length)];
+}
+
+// Selecting all the DOM Elements that are necessary -->
+
+// The Viewbox where the result will be shown
+const resultEl = document.getElementById("result");
+// The input slider, will use to change the length of the password
+const lengthEl = document.getElementById("slider");
+
+// Checkboxes representing the options that is responsible to create differnt type of password based on user
+const uppercaseEl = document.getElementById("uppercase");
+const lowercaseEl = document.getElementById("lowercase");
+const numberEl = document.getElementById("number");
+const symbolEl = document.getElementById("symbol");
+
+// Button to generate the password
+const generateBtn = document.getElementById("generate");
+// Button to copy the text
+const copyBtn = document.getElementById("copy-btn");
+// Result viewbox container
+const resultContainer = document.querySelector(".result");
+// Text info showed after generate button is clicked
+const copyInfo = document.querySelector(".result__info.right");
+// Text appear after copy button is clicked
+const copiedInfo = document.querySelector(".result__info.left");
+
+// if this variable is trye only then the copyBtn will appear, i.e. when the user first click generate the copyBth will interact.
+let generatedPassword = false;
+
+// Update Css Props of the COPY button
+// Getting the bounds of the result viewbox container
+let resultContainerBound = {
+	left: resultContainer.getBoundingClientRect().left,
+	top: resultContainer.getBoundingClientRect().top,
+};
+// This will update the position of the copy button based on mouse Position
+resultContainer.addEventListener("mousemove", e => {
+	resultContainerBound = {
+		left: resultContainer.getBoundingClientRect().left,
+		top: resultContainer.getBoundingClientRect().top,
+	};
+	if(generatedPassword){
+		copyBtn.style.opacity = '1';
+		copyBtn.style.pointerEvents = 'all';
+		copyBtn.style.setProperty("--x", `${e.x - resultContainerBound.left}px`);
+		copyBtn.style.setProperty("--y", `${e.y - resultContainerBound.top}px`);
+	}else{
+		copyBtn.style.opacity = '0';
+		copyBtn.style.pointerEvents = 'none';
+	}
+});
+window.addEventListener("resize", e => {
+	resultContainerBound = {
+		left: resultContainer.getBoundingClientRect().left,
+		top: resultContainer.getBoundingClientRect().top,
+	};
+});
+
+// Copy Password in clipboard
+copyBtn.addEventListener("click", () => {
+	const textarea = document.createElement("textarea");
+	const password = resultEl.innerText;
+	if (!password || password == "CLICK GENERATE") {
+		return;
+	}
+	textarea.value = password;
+	document.body.appendChild(textarea);
+	textarea.select();
+	document.execCommand("copy");
+	textarea.remove();
+
+	copyInfo.style.transform = "translateY(200%)";
+	copyInfo.style.opacity = "0";
+	copiedInfo.style.transform = "translateY(0%)";
+	copiedInfo.style.opacity = "0.75";
+});
+
+// When Generate is clicked Password id generated.
+generateBtn.addEventListener("click", () => {
+	const length = +lengthEl.value;
+	const hasLower = lowercaseEl.checked;
+	const hasUpper = uppercaseEl.checked;
+	const hasNumber = numberEl.checked;
+	const hasSymbol = symbolEl.checked;
+	generatedPassword = true;
+	resultEl.innerText = generatePassword(length, hasLower, hasUpper, hasNumber, hasSymbol);
+	copyInfo.style.transform = "translateY(0%)";
+	copyInfo.style.opacity = "0.75";
+	copiedInfo.style.transform = "translateY(200%)";
+	copiedInfo.style.opacity = "0";
+});
+
+// Function responsible to generate password and then returning it.
+function generatePassword(length, lower, upper, number, symbol) {
+	let generatedPassword = "";
+	const typesCount = lower + upper + number + symbol;
+	const typesArr = [{ lower }, { upper }, { number }, { symbol }].filter(item => Object.values(item)[0]);
+	if (typesCount === 0) {
+		return "";
+	}
+	for (let i = 0; i < length; i++) {
+		typesArr.forEach(type => {
+			const funcName = Object.keys(type)[0];
+			generatedPassword += randomFunc[funcName]();
+		});
+	}
+	return generatedPassword.slice(0, length)
+									.split('').sort(() => Math.random() - 0.5)
+									.join('');
+}
+
+// function that handles the checkboxes state, so at least one needs to be selected. The last checkbox will be disabled.
+function disableOnlyCheckbox(){
+	let totalChecked = [uppercaseEl, lowercaseEl, numberEl, symbolEl].filter(el => el.checked)
+	totalChecked.forEach(el => {
+		if(totalChecked.length == 1){
+			el.disabled = true;
+		}else{
+			el.disabled = false;
+		}
+	})
+}
+
+[uppercaseEl, lowercaseEl, numberEl, symbolEl].forEach(el => {
+	el.addEventListener('click', () => {
+		disableOnlyCheckbox()
+	})
+})
