@@ -14,6 +14,8 @@ The following image shows the web application's appearance and functionality:
 
 But I moved away from the task and did it differently:
 
+https://vitaliyzhark.github.io/Password-Generator/
+
 ![password generator demo](./assets/passwordgenerator.png)
 
 
