@@ -8,7 +8,7 @@ The password can include special characters.
 
 ## Instructions
 
-The following image shows the web application's appearance and functionality:
+The following image shows the web application's appearance and functionality: (but I moved away from the task and did it differently)
 
 ![password generator demo](./assets/05-javascript-challenge-demo.png)
 
